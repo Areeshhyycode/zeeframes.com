@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 
 const ASSET = "https://zeeframes.com/frontend-assets/images";
+const UNSPLASH = "https://images.unsplash.com";
+const img = (id) => `${UNSPLASH}/${id}?auto=format&fit=crop&w=900&q=80`;
 
 const niches = ["All Niches", "FinTech", "Logistic", "Marketplace", "Real Estate"];
 
@@ -11,36 +13,42 @@ const caseStudies = [
     desc: "Discover top freelancers for AI, design and creative services",
     niche: "Marketplace",
     bg: "linear-gradient(135deg, #5a6470 0%, #2c333c 100%)",
+    img: img("photo-1522071820081-009f0129c71c"),
   },
   {
     name: "TradeBack",
     desc: "Cashback tracking and weekly payout management for active traders",
     niche: "FinTech",
     bg: "linear-gradient(135deg, #1f2937 0%, #0d1117 100%)",
+    img: img("photo-1611974789855-9c2a0a7236a3"),
   },
   {
     name: "Gig Desk",
     desc: "All-in-one dashboard to manage gigs, tours, venues and payrolls",
     niche: "Marketplace",
     bg: "linear-gradient(135deg, #d9d9d9 0%, #f0f0f0 100%)",
+    img: img("photo-1551288049-bebda4e38f71"),
   },
   {
     name: "ChinaSoko",
     desc: "Real-time shipment tracking and delivery management at your fingertips",
     niche: "Logistic",
     bg: "linear-gradient(135deg, #ff5b5b 0%, #ff8a8a 100%)",
+    img: img("photo-1578575437130-527eed3abbec"),
   },
   {
     name: "Villa Vault",
     desc: "Find your perfect Ibiza luxury villa — for rent or purchase",
     niche: "Real Estate",
     bg: "linear-gradient(135deg, #c79a4b 0%, #e8c87f 100%)",
+    img: img("photo-1613490493576-7fde63acd811"),
   },
   {
     name: "Swap Coin",
     desc: "Swap, send and grow your crypto in one secure mobile wallet",
     niche: "FinTech",
     bg: "linear-gradient(135deg, #c6f042 0%, #e3ff8a 100%)",
+    img: img("photo-1621761191319-c6fb62004040"),
   },
 ];
 
@@ -133,10 +141,20 @@ export default function Work() {
             {visible.map((p) => (
               <div key={p.name} className="group cursor-pointer">
                 <div
-                  className="rounded-2xl h-[340px] md:h-[420px] flex items-end p-8 overflow-hidden transition-transform group-hover:scale-[1.02]"
+                  className="relative rounded-2xl h-[340px] md:h-[420px] flex items-end p-8 overflow-hidden transition-transform group-hover:scale-[1.02]"
                   style={{ background: p.bg }}
                 >
-                  <span className="text-5xl md:text-7xl font-extrabold text-black/15 uppercase">
+                  <img
+                    src={p.img}
+                    alt={p.name}
+                    loading="lazy"
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    onError={(e) => {
+                      e.currentTarget.style.display = "none";
+                    }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent" />
+                  <span className="relative text-4xl md:text-6xl font-extrabold text-white/90 uppercase drop-shadow-lg">
                     {p.name}
                   </span>
                 </div>
