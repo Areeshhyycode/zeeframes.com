@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Get-ChildItem -Path \"c:\\\\Users\\\\HP\\\\Desktop\\\\ServicesProject\" -Recurse -Depth 2 -Directory | Where-Object { $_.FullName -notmatch 'node_modules|\\\\.git' } | Select-Object FullName)",
+      "PowerShell(Get-ChildItem -Path \"c:\\\\Users\\\\HP\\\\Desktop\\\\ServicesProject\\\\client\" -Recurse -File | Where-Object { $_.FullName -notmatch 'node_modules|\\\\.git' } | Select-Object FullName)",
+      "WebFetch(domain:zeeframes.com)",
+      "PowerShell(npm run dev)",
+      "PowerShell(npx vite build 2>&1)",
+      "PowerShell(Get-ChildItem -Path \"c:\\\\Users\\\\HP\\\\Desktop\\\\ServicesProject\\\\server\" -Recurse -Exclude node_modules | Where-Object { $_.FullName -notmatch 'node_modules' } | Select-Object FullName)",
+      "PowerShell(Get-ChildItem -Path \"c:\\\\Users\\\\HP\\\\Desktop\\\\ServicesProject\\\\client\\\\src\" -Recurse | Where-Object { $_.FullName -notmatch 'node_modules' } | Select-Object FullName)",
+      "PowerShell(\"---PACKAGE---\")",
+      "PowerShell(\"---ENV---\")",
+      "PowerShell(git init; git add .; Write-Output \"===STAGED FILE COUNT===\"; \\(git diff --cached --name-only | Measure-Object -Line\\).Lines; Write-Output \"===CHECK SECRETS NOT STAGED \\(should be empty\\)===\"; git diff --cached --name-only | Select-String -Pattern \"node_modules|\\\\.env$\"; Write-Output \"===STAGED FILES===\"; git diff --cached --name-only)",
+      "PowerShell($paths = @\\(\"$env:ProgramFiles\\\\Git\\\\cmd\\\\git.exe\", \"${env:ProgramFiles\\(x86\\)}\\\\Git\\\\cmd\\\\git.exe\", \"$env:LOCALAPPDATA\\\\Programs\\\\Git\\\\cmd\\\\git.exe\"\\); foreach \\($p in $paths\\) { if \\(Test-Path $p\\) { Write-Output \"FOUND: $p\" } }; Write-Output \"---winget check---\"; \\(Get-Command winget -ErrorAction SilentlyContinue\\).Source)",
+      "PowerShell($env:NODE_NO_WARNINGS=1; node index.js)",
+      "PowerShell(winget install --id Git.Git -e --source winget --accept-source-agreements --accept-package-agreements --silent)",
+      "PowerShell(Write-Output \"--- SRV lookup ---\"; try { Resolve-DnsName -Type SRV \"_mongodb._tcp.cluster0.oddrmbj.mongodb.net\" -ErrorAction Stop | Select-Object NameTarget, Port } catch { Write-Output \"SRV FAILED: $\\($_.Exception.Message\\)\" }; Write-Output \"--- Internet check ---\"; try { \\(Invoke-WebRequest -Uri \"https://www.google.com\" -UseBasicParsing -TimeoutSec 8\\).StatusCode } catch { Write-Output \"NET FAILED: $\\($_.Exception.Message\\)\" })",
+      "PowerShell(try { Resolve-DnsName -Type TXT \"cluster0.oddrmbj.mongodb.net\" -ErrorAction Stop | Select-Object -ExpandProperty Strings } catch { Write-Output \"TXT FAILED: $\\($_.Exception.Message\\)\" })",
+      "PowerShell($env:Path = [System.Environment]::GetEnvironmentVariable\\(\"Path\",\"Machine\"\\) + \";\" + [System.Environment]::GetEnvironmentVariable\\(\"Path\",\"User\"\\); git --version)"
+    ]
+  }
+}
