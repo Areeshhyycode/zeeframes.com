@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { apiUrl } from "../lib/api";
 
 const ASSET = "https://zeeframes.com/frontend-assets/images";
 
@@ -132,7 +133,7 @@ export default function Contact() {
 
     setSubmitting(true);
     try {
-      const res = await fetch("/api/contacts", {
+      const res = await fetch(apiUrl("/api/contacts"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),

@@ -49,6 +49,33 @@ npm install
 npm run dev
 ```
 
+## Deployment
+
+This is a monorepo: the **frontend** (`client/`) is a static Vite app and the
+**backend** (`server/`) is an Express server. They deploy to **two different
+places** — the Express server cannot run on Vercel's static hosting.
+
+### Backend → Render
+1. Push this repo to GitHub.
+2. In Render: **New + → Blueprint**, select this repo. Render reads
+   [`render.yaml`](render.yaml) and creates the `zeeframes-api` web service
+   (root directory `server/`).
+3. Fill in the env vars when prompted: `MONGO_URI`, `JWT_SECRET`, `ADMIN_EMAIL`,
+   and optionally `GROQ_API_KEY`. (Render sets `PORT` automatically.)
+4. In **MongoDB Atlas → Network Access**, add `0.0.0.0/0` so Render can connect.
+5. Note your service URL, e.g. `https://zeeframes-api.onrender.com`.
+
+### Frontend → Vercel
+1. In Vercel, import the repo and set **Root Directory** to `client` (this is the
+   key step — without it the build fails because there's no `package.json` at the
+   repo root).
+2. Add an environment variable `VITE_API_URL` = your Render URL from above.
+3. Deploy. The frontend now calls the Render backend; `client/vercel.json`
+   handles SPA routing.
+
+> Locally you don't need `VITE_API_URL` — the Vite dev proxy forwards `/api` to
+> `http://localhost:5000` (see `client/vite.config.js`).
+
 ## Try it
 1. Go to `/signup` and register with the email set in `ADMIN_EMAIL` → you land on
    the **Admin Dashboard**. Upload a PDF/TXT/MD (e.g. an FAQ).

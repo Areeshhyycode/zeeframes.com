@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useAuth } from "../context/AuthContext";
+import { apiUrl } from "../lib/api";
 
 export default function Admin() {
   const { user, token } = useAuth();
@@ -14,7 +15,7 @@ export default function Admin() {
 
   const loadDocs = async () => {
     try {
-      const res = await fetch("/api/documents", { headers: authHeaders });
+      const res = await fetch(apiUrl("/api/documents"), { headers: authHeaders });
       const data = await res.json();
       if (res.ok && data.success) setDocs(data.data);
       else setError(data.error || "Failed to load documents");
@@ -45,7 +46,7 @@ export default function Admin() {
 
     setUploading(true);
     try {
-      const res = await fetch("/api/documents", {
+      const res = await fetch(apiUrl("/api/documents"), {
         method: "POST",
         headers: authHeaders,
         body: fd,
@@ -67,7 +68,7 @@ export default function Admin() {
   const handleDelete = async (id, name) => {
     if (!window.confirm(`Remove "${name}" from the knowledge base?`)) return;
     try {
-      const res = await fetch(`/api/documents/${id}`, {
+      const res = await fetch(apiUrl(`/api/documents/${id}`), {
         method: "DELETE",
         headers: authHeaders,
       });
