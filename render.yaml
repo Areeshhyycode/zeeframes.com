@@ -1,0 +1,24 @@
+# Render Blueprint — deploys the Express backend in server/.
+# In Render: New + → Blueprint → pick this repo. Render reads this file,
+# then prompts you to fill in the secret env vars below.
+services:
+  - type: web
+    name: zeeframes-api
+    runtime: node
+    rootDir: server
+    plan: free
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /
+    envVars:
+      # Render injects PORT automatically; the server reads process.env.PORT.
+      - key: MONGO_URI
+        sync: false # set in the Render dashboard (secret)
+      - key: JWT_SECRET
+        sync: false # set in the Render dashboard (secret)
+      - key: ADMIN_EMAIL
+        sync: false # e.g. admin@zeeframes.com
+      - key: GROQ_API_KEY
+        sync: false # optional — enables LLM answers
+      - key: GROQ_MODEL
+        value: llama-3.3-70b-versatile
