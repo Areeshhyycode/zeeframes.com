@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
+import { apiUrl } from "../lib/api";
 
 const suggestions = [
   "What services do you offer?",
@@ -36,7 +37,7 @@ export default function Chat() {
     setTyping(true);
 
     try {
-      const res = await fetch("/api/chat", {
+      const res = await fetch(apiUrl("/api/chat"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
