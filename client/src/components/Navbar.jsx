@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 /* ----------------------------- Icons ----------------------------- */
 const Icon = ({ path }) => (
@@ -128,8 +129,15 @@ const categories = [
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [activeCat, setActiveCat] = useState(categories[0].id);
+  const { isAuthenticated, isAdmin, user, logout } = useAuth();
+  const navigate = useNavigate();
 
   const active = categories.find((c) => c.id === activeCat) || categories[0];
+
+  const handleLogout = () => {
+    logout();
+    navigate("/");
+  };
 
   return (
     <nav className="fixed top-0 left-0 w-full z-50 bg-black/90 backdrop-blur-md border-b border-white/10">
@@ -238,19 +246,55 @@ export default function Navbar() {
           <Link to="/chat" className="text-white/80 hover:text-white transition">
             Chat
           </Link>
+          {isAdmin && (
+            <Link to="/admin" className="text-white/80 hover:text-white transition">
+              Admin
+            </Link>
+          )}
         </div>
 
-        {/* CTA */}
-        <Link
-          to="/contact"
-          className="bg-[#CCFF00] hover:bg-yellow-300 text-black font-semibold px-5 py-2.5 rounded-full flex items-center gap-1 shrink-0 transition"
-        >
-          Work with us
-          <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
-            <path d="M14.58 5.42L5 15" stroke="#000" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-            <path d="M6.67 5H15v8.33" stroke="#000" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </Link>
+        {/* CTA + auth */}
+        <div className="flex items-center gap-3 shrink-0">
+          {isAuthenticated ? (
+            <>
+              <span className="hidden lg:inline text-white/60 text-sm">
+                Hi, {user?.name?.split(" ")[0]}
+              </span>
+              <button
+                onClick={handleLogout}
+                className="text-white/80 hover:text-white text-sm border border-white/15 hover:border-white/40 rounded-full px-4 py-2 transition"
+              >
+                Log out
+              </button>
+            </>
+          ) : (
+            <>
+              <Link
+                to="/login"
+                className="hidden sm:inline text-white/80 hover:text-white text-sm transition"
+              >
+                Log in
+              </Link>
+              <Link
+                to="/signup"
+                className="text-white/80 hover:text-white text-sm border border-white/15 hover:border-white/40 rounded-full px-4 py-2 transition"
+              >
+                Sign up
+              </Link>
+            </>
+          )}
+
+          <Link
+            to="/contact"
+            className="hidden md:flex bg-[#CCFF00] hover:bg-yellow-300 text-black font-semibold px-5 py-2.5 rounded-full items-center gap-1 transition"
+          >
+            Work with us
+            <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
+              <path d="M14.58 5.42L5 15" stroke="#000" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M6.67 5H15v8.33" stroke="#000" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </Link>
+        </div>
       </div>
     </nav>
   );

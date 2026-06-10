@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { useAuth } from "../context/AuthContext";
 
 const suggestions = [
   "What services do you offer?",
@@ -7,26 +8,8 @@ const suggestions = [
   "How do I get started?",
 ];
 
-const botReplies = {
-  default:
-    "Thanks for reaching out! Our team will get back to you shortly. In the meantime, feel free to explore our services or book a discovery call.",
-  service:
-    "We offer AI Automation, AI Agents & Support, and Custom AI Development & Strategy — including workflow automation, voice agents, and CRM setups. Which one interests you?",
-  cost:
-    "Project pricing depends on scope and complexity. Most engagements start around a fixed discovery phase — book a free call and we'll give you an exact quote.",
-  start:
-    "Getting started is easy! Just click 'Work with us', tell us about your goals, and we'll set up a discovery call within 24 hours.",
-};
-
-function getBotReply(text) {
-  const t = text.toLowerCase();
-  if (t.includes("service") || t.includes("offer") || t.includes("do you")) return botReplies.service;
-  if (t.includes("cost") || t.includes("price") || t.includes("much")) return botReplies.cost;
-  if (t.includes("start") || t.includes("begin") || t.includes("how do i")) return botReplies.start;
-  return botReplies.default;
-}
-
 export default function Chat() {
+  const { token } = useAuth();
   const [messages, setMessages] = useState([
     {
       role: "bot",
@@ -41,16 +24,40 @@ export default function Chat() {
     endRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, typing]);
 
-  const send = (text) => {
+  const send = async (text) => {
     const trimmed = text.trim();
-    if (!trimmed) return;
+    if (!trimmed || typing) return;
+
+    // Snapshot the prior turns so the bot has conversation memory.
+    const history = messages.map((m) => ({ role: m.role === "user" ? "user" : "bot", text: m.text }));
+
     setMessages((m) => [...m, { role: "user", text: trimmed }]);
     setInput("");
     setTyping(true);
-    setTimeout(() => {
+
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ message: trimmed, history }),
+      });
+      const data = await res.json();
+      const reply =
+        res.ok && data.success
+          ? data.reply
+          : data.error || "Sorry, something went wrong. Please try again.";
+      setMessages((m) => [...m, { role: "bot", text: reply }]);
+    } catch {
+      setMessages((m) => [
+        ...m,
+        { role: "bot", text: "I couldn't reach the server. Please check your connection and try again." },
+      ]);
+    } finally {
       setTyping(false);
-      setMessages((m) => [...m, { role: "bot", text: getBotReply(trimmed) }]);
-    }, 900);
+    }
   };
 
   const handleSubmit = (e) => {
